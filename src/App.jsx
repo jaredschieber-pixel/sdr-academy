@@ -147,24 +147,126 @@ function App() {
 
   const completedCount = userTasks.filter((ut) => ut.status === 'completed').length
 
-  if (loading) {
-    return (
-      <div
+  // ─── Reusable Progress Sidebar ───────────────────────────────────────────────
+  const ProgressSidebar = () => (
+    <div style={{ width: '300px', flexShrink: 0 }}>
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          fontFamily: 'system-ui',
-          fontSize: '24px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'black'
+          background: 'white',
+          padding: '28px',
+          borderRadius: '16px',
+          border: '2px solid #e9ecef',
+          marginBottom: '20px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          position: 'sticky',
+          top: '80px'
         }}
       >
+        <h3 style={{ marginTop: 0, fontSize: '18px', marginBottom: '20px', color: '#333' }}>
+          Your Progress
+        </h3>
+        <div style={{ marginBottom: '25px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ fontSize: '14px', color: '#666' }}>Level Progress</span>
+            <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#667eea', textTransform: 'capitalize' }}>
+              {getLevelIcon(profile?.level)} {profile?.level || 'rookie'}
+            </span>
+          </div>
+          <div style={{ background: '#f0f0f0', height: '10px', borderRadius: '10px', overflow: 'hidden' }}>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${getLevelProgress()}%` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+              style={{ background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)', height: '100%' }}
+            />
+          </div>
+          <div style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
+            {profile?.total_xp || 0} / {getNextLevelXP()} XP
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            style={{
+              background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+              padding: '20px',
+              borderRadius: '12px',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#667eea' }}>
+              {completedCount}
+            </div>
+            <div style={{ fontSize: '13px', color: '#666', marginTop: '5px' }}>Tasks Done</div>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            style={{
+              background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+              padding: '20px',
+              borderRadius: '12px',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#764ba2' }}>
+              {profile?.total_xp || 0}
+            </div>
+            <div style={{ fontSize: '13px', color: '#666', marginTop: '5px' }}>Total XP</div>
+          </motion.div>
+        </div>
+
         <motion.div
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            padding: '24px',
+            borderRadius: '12px',
+            color: 'white',
+            marginTop: '20px',
+            boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)'
+          }}
         >
+          <h3 style={{ marginTop: 0, fontSize: '16px', marginBottom: '14px' }}>
+            🏆 Level Milestones
+          </h3>
+          <div style={{ fontSize: '13px', lineHeight: '2.2', opacity: 0.95 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🥉</span> Rookie: 0 – 999 XP
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🥈</span> Prospector: 1,000+ XP
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🥇</span> Closer: 3,000+ XP
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>💎</span> Elite: 7,000+ XP
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
+  )
+
+  // ─── Loading ──────────────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontFamily: 'system-ui',
+        fontSize: '24px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white'
+      }}>
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>
           Loading...
         </motion.div>
       </div>
@@ -173,44 +275,31 @@ function App() {
 
   const isManager = profile?.role === 'manager'
 
+  // ─── Manager View ─────────────────────────────────────────────────────────────
   if (isManager) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#f8f9fa',
-          fontFamily: 'system-ui',
-          color: 'black'
-        }}
-      >
-        <div
-          style={{
-            background: 'white',
-            borderBottom: '2px solid #e9ecef',
-            padding: '20px 60px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-          }}
-        >
-          <h1 style={{ margin: 0, fontSize: '24px', color: 'black' }}>
-            🎯 SDR Academy - Manager View
-          </h1>
+      <div style={{ minHeight: '100vh', background: '#f8f9fa', fontFamily: 'system-ui', color: 'black' }}>
+        <div style={{
+          background: 'white',
+          borderBottom: '2px solid #e9ecef',
+          padding: '16px 40px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+        }}>
+          <h1 style={{ margin: 0, fontSize: '22px', color: 'black' }}>🎯 SDR Academy – Manager View</h1>
           <button
             onClick={handleSignOut}
             style={{
-              padding: '10px 20px',
+              padding: '9px 18px',
               background: '#f8f9fa',
               border: '1px solid #ddd',
               borderRadius: '6px',
               cursor: 'pointer',
               fontWeight: '500',
-              transition: 'all 0.2s',
               color: 'black'
             }}
-            onMouseOver={(e) => (e.target.style.background = '#e9ecef')}
-            onMouseOut={(e) => (e.target.style.background = '#f8f9fa')}
           >
             Sign Out
           </button>
@@ -220,50 +309,40 @@ function App() {
     )
   }
 
+  // ─── Login ────────────────────────────────────────────────────────────────────
   if (!user) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          height: '100vh',
-          fontFamily: 'system-ui',
-          width: '100%',
-          overflow: 'hidden',
-          color: 'black'
-        }}
-      >
+      <div style={{
+        display: 'flex',
+        height: '100vh',
+        fontFamily: 'system-ui',
+        width: '100%',
+        overflow: 'hidden',
+        color: 'black'
+      }}>
         <motion.div
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
           style={{
             flex: 1,
-            minWidth: '0',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '40px',
-            color: 'black'
+            padding: '60px 40px',
+            color: 'white'
           }}
         >
           <motion.h1
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ repeat: Infinity, duration: 3 }}
-            style={{ fontSize: '48px', marginBottom: '20px', color: 'black' }}
+            style={{ fontSize: '52px', marginBottom: '20px', color: 'white' }}
           >
             🎯 SDR Academy
           </motion.h1>
-          <p
-            style={{
-              fontSize: '20px',
-              opacity: 0.9,
-              textAlign: 'center',
-              maxWidth: '400px',
-              color: 'black'
-            }}
-          >
+          <p style={{ fontSize: '20px', opacity: 0.9, textAlign: 'center', maxWidth: '400px', color: 'white' }}>
             Level up your sales skills with gamified onboarding
           </p>
           <motion.div
@@ -274,49 +353,30 @@ function App() {
             📞 💼 📊
           </motion.div>
         </motion.div>
+
         <motion.div
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
           style={{
             flex: 1,
-            minWidth: '0',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             background: '#f8f9fa',
-            padding: '40px',
-            color: 'black'
+            padding: '60px 40px'
           }}
         >
           <div style={{ width: '100%', maxWidth: '400px' }}>
             <h2 style={{ fontSize: '32px', marginBottom: '10px', color: 'black' }}>
               {isSignUp ? 'Create Account' : 'Welcome Back'}
             </h2>
-            <p
-              style={{
-                color: 'black',
-                marginBottom: '40px',
-                fontSize: '16px'
-              }}
-            >
-              {isSignUp
-                ? 'Sign up to start your journey'
-                : 'Sign in to continue your progress'}
+            <p style={{ color: '#666', marginBottom: '40px', fontSize: '16px' }}>
+              {isSignUp ? 'Sign up to start your journey' : 'Sign in to continue your progress'}
             </p>
-            <form
-              onSubmit={handleAuth}
-              style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
-            >
+            <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: '8px',
-                    color: 'black',
-                    fontWeight: '500'
-                  }}
-                >
+                <label style={{ display: 'block', marginBottom: '8px', color: 'black', fontWeight: '500' }}>
                   Email
                 </label>
                 <input
@@ -326,29 +386,16 @@ function App() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   style={{
-                    width: '100%',
-                    padding: '14px',
-                    fontSize: '16px',
-                    border: '2px solid #ddd',
-                    borderRadius: '8px',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    transition: 'border 0.2s',
-                    color: 'black'
+                    width: '100%', padding: '14px', fontSize: '16px',
+                    border: '2px solid #ddd', borderRadius: '8px', outline: 'none',
+                    boxSizing: 'border-box', transition: 'border 0.2s', color: 'black'
                   }}
                   onFocus={(e) => (e.target.style.borderColor = '#667eea')}
                   onBlur={(e) => (e.target.style.borderColor = '#ddd')}
                 />
               </div>
               <div>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: '8px',
-                    color: 'black',
-                    fontWeight: '500'
-                  }}
-                >
+                <label style={{ display: 'block', marginBottom: '8px', color: 'black', fontWeight: '500' }}>
                   Password
                 </label>
                 <input
@@ -358,15 +405,9 @@ function App() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   style={{
-                    width: '100%',
-                    padding: '14px',
-                    fontSize: '16px',
-                    border: '2px solid #ddd',
-                    borderRadius: '8px',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    transition: 'border 0.2s',
-                    color: 'black'
+                    width: '100%', padding: '14px', fontSize: '16px',
+                    border: '2px solid #ddd', borderRadius: '8px', outline: 'none',
+                    boxSizing: 'border-box', transition: 'border 0.2s', color: 'black'
                   }}
                   onFocus={(e) => (e.target.style.borderColor = '#667eea')}
                   onBlur={(e) => (e.target.style.borderColor = '#ddd')}
@@ -378,15 +419,9 @@ function App() {
                 type="submit"
                 disabled={loading}
                 style={{
-                  padding: '14px',
-                  fontSize: '16px',
-                  background: '#667eea',
-                  color: 'black',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  marginTop: '10px'
+                  padding: '14px', fontSize: '16px', background: '#667eea',
+                  color: 'white', border: 'none', borderRadius: '8px',
+                  cursor: 'pointer', fontWeight: 'bold', marginTop: '10px'
                 }}
               >
                 {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
@@ -396,17 +431,11 @@ function App() {
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'black',
-                  cursor: 'pointer',
-                  fontSize: '15px',
-                  textDecoration: 'underline'
+                  background: 'none', border: 'none', color: '#667eea',
+                  cursor: 'pointer', fontSize: '15px', textDecoration: 'underline'
                 }}
               >
-                {isSignUp
-                  ? 'Already have an account? Sign In'
-                  : "Don't have an account? Sign Up"}
+                {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
               </button>
             </div>
           </div>
@@ -415,16 +444,15 @@ function App() {
     )
   }
 
+  // ─── Main App ────────────────────────────────────────────────────────────────
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%)',
-        fontFamily: 'system-ui',
-        width: '100%',
-        color: 'black'
-      }}
-    >
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%)',
+      fontFamily: 'system-ui',
+      color: 'black'
+    }}>
+      {/* Celebration overlay */}
       <AnimatePresence>
         {showCelebration && (
           <motion.div
@@ -432,204 +460,70 @@ function App() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
             style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
+              position: 'fixed', top: '50%', left: '50%',
               transform: 'translate(-50%, -50%)',
-              background: 'white',
-              padding: '40px 60px',
-              borderRadius: '20px',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-              zIndex: 1000,
-              textAlign: 'center',
-              color: 'black'
+              background: 'white', padding: '40px 60px',
+              borderRadius: '20px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+              zIndex: 1000, textAlign: 'center', color: 'black'
             }}
           >
             <div style={{ fontSize: '64px', marginBottom: '20px' }}>🎉</div>
-            <h2 style={{ fontSize: '28px', marginBottom: '10px', color: 'black' }}>
-              Submitted!
-            </h2>
-            <p style={{ fontSize: '16px', color: 'black' }}>Pending manager review</p>
+            <h2 style={{ fontSize: '28px', marginBottom: '10px', color: 'black' }}>Submitted!</h2>
+            <p style={{ fontSize: '16px', color: '#666' }}>Pending manager review</p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div
-        style={{
-          background: 'white',
-          borderBottom: '2px solid #e9ecef',
-          padding: '15px 30px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-          minHeight: '60px',
-          flexWrap: 'wrap',
-          gap: '15px',
-          color: 'black'
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '15px',
-            flex: '1 1 auto',
-            minWidth: '0'
-          }}
-        >
-          <h1
-            style={{
-              margin: 0,
-              fontSize: '18px',
-              whiteSpace: 'nowrap',
-              color: 'black'
-            }}
-          >
+      {/* ── Navbar ── */}
+      <div style={{
+        background: 'white',
+        borderBottom: '2px solid #e9ecef',
+        padding: '0 40px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+        height: '60px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <h1 style={{ margin: 0, fontSize: '18px', fontWeight: '700', whiteSpace: 'nowrap', color: 'black' }}>
             🎯 SDR Academy
           </h1>
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-            <a
-              onClick={() => setCurrentView('tasks')}
-              style={{
-                color: 'black',
-                textDecoration: 'none',
-                fontWeight: '500',
-                position: 'relative',
-                cursor: 'pointer',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Tasks
-              {currentView === 'tasks' && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '-6px',
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: '#667eea'
-                  }}
-                />
-              )}
-            </a>
-            <a
-              onClick={() => setCurrentView('activity')}
-              style={{
-                color: 'black',
-                textDecoration: 'none',
-                fontWeight: '500',
-                position: 'relative',
-                cursor: 'pointer',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Activity
-              {currentView === 'activity' && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '-6px',
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: '#667eea'
-                  }}
-                />
-              )}
-            </a>
-            <a
-              onClick={() => setCurrentView('badges')}
-              style={{
-                color: 'black',
-                textDecoration: 'none',
-                fontWeight: '500',
-                position: 'relative',
-                cursor: 'pointer',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Badges
-              {currentView === 'badges' && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '-6px',
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: '#667eea'
-                  }}
-                />
-              )}
-            </a>
-            <a
-              onClick={() => setCurrentView('leaderboard')}
-              style={{
-                color: 'black',
-                textDecoration: 'none',
-                fontWeight: '500',
-                position: 'relative',
-                cursor: 'pointer',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Leaderboard
-              {currentView === 'leaderboard' && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '-6px',
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: '#667eea'
-                  }}
-                />
-              )}
-            </a>
-          </div>
+          <nav style={{ display: 'flex', gap: '8px' }}>
+            {['tasks', 'activity', 'badges', 'leaderboard'].map((view) => (
+              <button
+                key={view}
+                onClick={() => setCurrentView(view)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '6px 14px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: currentView === view ? '700' : '500',
+                  color: currentView === view ? '#667eea' : '#555',
+                  borderBottom: currentView === view ? '2px solid #667eea' : '2px solid transparent',
+                  borderRadius: '4px 4px 0 0',
+                  textTransform: 'capitalize',
+                  transition: 'all 0.15s'
+                }}
+              >
+                {view.charAt(0).toUpperCase() + view.slice(1)}
+              </button>
+            ))}
+          </nav>
         </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            flexShrink: 0
-          }}
-        >
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ textAlign: 'right' }}>
-            <div
-              style={{
-                fontSize: '12px',
-                color: 'black',
-                fontWeight: '500',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: '180px'
-              }}
-            >
+            <div style={{ fontSize: '13px', fontWeight: '600', color: 'black', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user.email}
             </div>
-            <div
-              style={{
-                fontSize: '11px',
-                color: 'black',
-                textTransform: 'capitalize',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              {getLevelIcon(profile?.level)} {profile?.level || 'rookie'} •{' '}
-              {profile?.total_xp || 0} XP
+            <div style={{ fontSize: '12px', color: '#888', textTransform: 'capitalize' }}>
+              {getLevelIcon(profile?.level)} {profile?.level || 'rookie'} · {profile?.total_xp || 0} XP
             </div>
           </div>
           <motion.button
@@ -637,15 +531,10 @@ function App() {
             whileTap={{ scale: 0.95 }}
             onClick={handleSignOut}
             style={{
-              padding: '8px 14px',
-              background: '#f8f9fa',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: '500',
-              fontSize: '13px',
-              whiteSpace: 'nowrap',
-              color: 'black'
+              padding: '8px 16px', background: '#f8f9fa',
+              border: '1px solid #ddd', borderRadius: '6px',
+              cursor: 'pointer', fontWeight: '500', fontSize: '13px',
+              whiteSpace: 'nowrap', color: 'black'
             }}
           >
             Sign Out
@@ -653,492 +542,173 @@ function App() {
         </div>
       </div>
 
-      {currentView === 'tasks' && (
-        <div
-          style={{
-            display: 'flex',
-            gap: '40px',
-            padding: '40px 30px',
-            maxWidth: '1600px',
-            margin: '0 auto',
-            flexWrap: 'wrap',
-            color: 'black'
-          }}
-        >
-          <div style={{ flex: '2 1 600px', minWidth: 0 }}>
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              style={{ marginBottom: '30px' }}
-            >
-              <h2
-                style={{
-                  fontSize: '28px',
-                  marginBottom: '10px',
+      {/* ── Page Content ── */}
+      <div style={{
+        display: 'flex',
+        gap: '32px',
+        padding: '36px 40px',
+        maxWidth: '1400px',
+        margin: '0 auto',
+        alignItems: 'flex-start'
+      }}>
+        {/* Main content column */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+
+          {/* ── TASKS VIEW ── */}
+          {currentView === 'tasks' && (
+            <>
+              <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ marginBottom: '28px' }}>
+                <h2 style={{
+                  fontSize: '28px', marginBottom: '6px',
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}
-              >
-                Your Tasks
-              </h2>
-              <p style={{ color: '#666', fontSize: '16px' }}>
-                Complete tasks to earn XP and level up
-              </p>
-            </motion.div>
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
+                }}>
+                  Your Tasks
+                </h2>
+                <p style={{ color: '#888', fontSize: '15px', margin: 0 }}>Complete tasks to earn XP and level up</p>
+              </motion.div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {tasks.map((task, index) => {
-                const status = getTaskStatus(task.id)
-                const isCompleted = status === 'completed'
-                const isPending = status === 'submitted'
-                const needsRevision = status === 'needs_revision'
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {tasks.map((task, index) => {
+                  const status = getTaskStatus(task.id)
+                  const isCompleted = status === 'completed'
+                  const isPending = status === 'submitted'
+                  const needsRevision = status === 'needs_revision'
 
-                return (
-                  <motion.div
-                    key={task.id}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -4, boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}
-                    style={{
-                      background: 'white',
-                      padding: '30px',
-                      borderRadius: '16px',
-                      border: `2px solid ${
-                        isCompleted
-                          ? '#52c41a'
-                          : needsRevision
-                          ? '#fa8c16'
-                          : isPending
-                          ? '#0066ff'
-                          : '#e9ecef'
-                      }`,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                      opacity: isCompleted ? 0.7 : 1,
-                      transition: 'all 0.3s'
-                    }}
-                  >
-                    <div
+                  return (
+                    <motion.div
+                      key={task.id}
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: index * 0.08 }}
+                      whileHover={{ y: -3, boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
                       style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'start',
-                        marginBottom: '15px',
-                        flexWrap: 'wrap',
-                        gap: '10px'
+                        background: 'white',
+                        padding: '28px',
+                        borderRadius: '14px',
+                        border: `2px solid ${isCompleted ? '#52c41a' : needsRevision ? '#fa8c16' : isPending ? '#0066ff' : '#e9ecef'}`,
+                        opacity: isCompleted ? 0.75 : 1,
+                        transition: 'all 0.25s'
                       }}
                     >
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          flex: '1 1 auto'
-                        }}
-                      >
-                        {isCompleted && (
-                          <motion.span
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            style={{ fontSize: '28px' }}
-                          >
-                            ✅
-                          </motion.span>
-                        )}
-                        {isPending && (
-                          <motion.span
-                            animate={{ rotate: [0, 10, -10, 0] }}
-                            transition={{ repeat: Infinity, duration: 2 }}
-                            style={{ fontSize: '28px' }}
-                          >
-                            ⏳
-                          </motion.span>
-                        )}
-                        {needsRevision && (
-                          <motion.span
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ repeat: Infinity, duration: 1.5 }}
-                            style={{ fontSize: '28px' }}
-                          >
-                            📝
-                          </motion.span>
-                        )}
-                        <h3 style={{ margin: 0, fontSize: '20px', color: '#333' }}>
-                          {task.title}
-                        </h3>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px', gap: '12px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {isCompleted && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ fontSize: '24px' }}>✅</motion.span>}
+                          {isPending && <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }} style={{ fontSize: '24px' }}>⏳</motion.span>}
+                          {needsRevision && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} style={{ fontSize: '24px' }}>📝</motion.span>}
+                          <h3 style={{ margin: 0, fontSize: '18px', color: '#222' }}>{task.title}</h3>
+                        </div>
+                        <span style={{
+                          background: isCompleted ? '#f6ffed' : isPending ? '#e7f3ff' : needsRevision ? '#fff7e6' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                          color: isCompleted ? '#52c41a' : isPending ? '#0066ff' : needsRevision ? '#fa8c16' : 'white',
+                          padding: '6px 14px', borderRadius: '20px', fontSize: '13px',
+                          fontWeight: 'bold', whiteSpace: 'nowrap', flexShrink: 0
+                        }}>
+                          {isCompleted ? '✓ ' : '+'}{task.xp_value} XP
+                        </span>
                       </div>
-                      <motion.span
-                        whileHover={{ scale: 1.1 }}
-                        style={{
-                          background: isCompleted
-                            ? '#f6ffed'
-                            : isPending
-                            ? '#e7f3ff'
-                            : needsRevision
-                            ? '#fff7e6'
-                            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          color: isCompleted
-                            ? '#52c41a'
-                            : isPending
-                            ? '#0066ff'
-                            : needsRevision
-                            ? '#fa8c16'
-                            : 'white',
-                          padding: '8px 16px',
-                          borderRadius: '20px',
-                          fontSize: '14px',
-                          fontWeight: 'bold',
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        {isCompleted ? '✓ ' : '+'}
-                        {task.xp_value} XP
-                      </motion.span>
-                    </div>
-                    <p
-                      style={{
-                        color: '#666',
-                        fontSize: '15px',
-                        lineHeight: '1.8',
-                        marginBottom: '20px'
-                      }}
-                    >
-                      {task.description}
-                    </p>
-                    {isPending && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        style={{
-                          background: 'linear-gradient(90deg, #e7f3ff 0%, #fff 100%)',
-                          padding: '12px 16px',
-                          borderRadius: '8px',
-                          marginBottom: '15px',
-                          color: '#0066ff',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          borderLeft: '4px solid #0066ff'
-                        }}
-                      >
-                        ⏳ Pending manager review
-                      </motion.div>
-                    )}
-                    {needsRevision && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        style={{
-                          background: 'linear-gradient(90deg, #fff7e6 0%, #fff 100%)',
-                          padding: '12px 16px',
-                          borderRadius: '8px',
-                          marginBottom: '15px',
-                          color: '#fa8c16',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          borderLeft: '4px solid #fa8c16'
-                        }}
-                      >
-                        📝 Needs revision - please resubmit
-                      </motion.div>
-                    )}
-                    {!isCompleted && !isPending && (
-                      showSubmit === task.id ? (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                        >
-                          <textarea
-                            placeholder="Paste your work here..."
-                            value={submission}
-                            onChange={(e) => setSubmission(e.target.value)}
+                      <p style={{ color: '#666', fontSize: '14px', lineHeight: '1.7', marginBottom: '18px' }}>
+                        {task.description}
+                      </p>
+
+                      {isPending && (
+                        <div style={{ background: 'linear-gradient(90deg, #e7f3ff 0%, #fff 100%)', padding: '10px 14px', borderRadius: '8px', marginBottom: '14px', color: '#0066ff', fontSize: '13px', fontWeight: '500', borderLeft: '4px solid #0066ff' }}>
+                          ⏳ Pending manager review
+                        </div>
+                      )}
+                      {needsRevision && (
+                        <div style={{ background: 'linear-gradient(90deg, #fff7e6 0%, #fff 100%)', padding: '10px 14px', borderRadius: '8px', marginBottom: '14px', color: '#fa8c16', fontSize: '13px', fontWeight: '500', borderLeft: '4px solid #fa8c16' }}>
+                          📝 Needs revision – please resubmit
+                        </div>
+                      )}
+
+                      {!isCompleted && !isPending && (
+                        showSubmit === task.id ? (
+                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                            <textarea
+                              placeholder="Paste your work here..."
+                              value={submission}
+                              onChange={(e) => setSubmission(e.target.value)}
+                              style={{
+                                width: '100%', minHeight: '110px', padding: '14px',
+                                fontSize: '14px', border: '2px solid #ddd', borderRadius: '10px',
+                                marginBottom: '14px', fontFamily: 'system-ui',
+                                boxSizing: 'border-box', resize: 'vertical', transition: 'border 0.2s'
+                              }}
+                              onFocus={(e) => (e.target.style.borderColor = '#667eea')}
+                              onBlur={(e) => (e.target.style.borderColor = '#ddd')}
+                            />
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => handleSubmit(task.id)}
+                                style={{
+                                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                  color: 'white', padding: '11px 22px', border: 'none',
+                                  borderRadius: '8px', cursor: 'pointer', fontWeight: '500', fontSize: '14px'
+                                }}
+                              >
+                                Submit Task
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setShowSubmit(null)}
+                                style={{
+                                  background: '#f8f9fa', color: '#666', padding: '11px 22px',
+                                  border: '1px solid #ddd', borderRadius: '8px',
+                                  cursor: 'pointer', fontWeight: '500', fontSize: '14px'
+                                }}
+                              >
+                                Cancel
+                              </motion.button>
+                            </div>
+                          </motion.div>
+                        ) : (
+                          <motion.button
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => setShowSubmit(task.id)}
                             style={{
-                              width: '100%',
-                              minHeight: '120px',
-                              padding: '15px',
-                              fontSize: '15px',
-                              border: '2px solid #ddd',
-                              borderRadius: '12px',
-                              marginBottom: '15px',
-                              fontFamily: 'system-ui',
-                              boxSizing: 'border-box',
-                              resize: 'vertical',
-                              transition: 'border 0.2s'
-                            }}
-                            onFocus={(e) => (e.target.style.borderColor = '#667eea')}
-                            onBlur={(e) => (e.target.style.borderColor = '#ddd')}
-                          />
-                          <div
-                            style={{
-                              display: 'flex',
-                              gap: '10px',
-                              flexWrap: 'wrap'
+                              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                              color: 'white', padding: '11px 22px', border: 'none',
+                              borderRadius: '8px', cursor: 'pointer', fontWeight: '500', fontSize: '14px'
                             }}
                           >
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => handleSubmit(task.id)}
-                              style={{
-                                background:
-                                  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                color: 'white',
-                                padding: '12px 24px',
-                                border: 'none',
-                                borderRadius: '8px',
-                                cursor: 'pointer',
-                                fontWeight: '500',
-                                fontSize: '15px'
-                              }}
-                            >
-                              Submit Task
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => setShowSubmit(null)}
-                              style={{
-                                background: '#f8f9fa',
-                                color: '#666',
-                                padding: '12px 24px',
-                                border: '1px solid #ddd',
-                                borderRadius: '8px',
-                                cursor: 'pointer',
-                                fontWeight: '500',
-                                fontSize: '15px'
-                              }}
-                            >
-                              Cancel
-                            </motion.button>
-                          </div>
-                        </motion.div>
-                      ) : (
-                        <motion.button
-                          whileHover={{
-                            scale: 1.05,
-                            background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'
-                          }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => setShowSubmit(task.id)}
-                          style={{
-                            background:
-                              'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            color: 'white',
-                            padding: '12px 24px',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: '500',
-                            fontSize: '15px'
-                          }}
-                        >
-                          {needsRevision ? 'Resubmit Task' : 'Submit Task'}
-                        </motion.button>
-                      )
-                    )}
-                    {isCompleted && (
-                      <div
-                        style={{
-                          color: '#52c41a',
-                          fontWeight: '500',
-                          fontSize: '14px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px'
-                        }}
-                      >
-                        ✓ Completed
-                      </div>
-                    )}
-                  </motion.div>
-                )
-              })}
-            </div>
-          </div>
+                            {needsRevision ? 'Resubmit Task' : 'Submit Task'}
+                          </motion.button>
+                        )
+                      )}
+                      {isCompleted && (
+                        <div style={{ color: '#52c41a', fontWeight: '500', fontSize: '14px' }}>✓ Completed</div>
+                      )}
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </>
+          )}
 
-          <div style={{ flex: '1 1 300px', minWidth: '280px' }}>
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              whileHover={{ y: -4 }}
-              style={{
-                background: 'white',
-                padding: '30px',
-                borderRadius: '16px',
-                border: '2px solid #e9ecef',
-                marginBottom: '20px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                transition: 'all 0.3s'
-              }}
-            >
-              <h3 style={{ marginTop: 0, fontSize: '18px', marginBottom: '20px' }}>
-                Your Progress
-              </h3>
-              <div style={{ marginBottom: '25px' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '8px'
-                  }}
-                >
-                  <span style={{ fontSize: '14px', color: '#666' }}>Level Progress</span>
-                  <span
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 'bold',
-                      color: '#667eea',
-                      textTransform: 'capitalize'
-                    }}
-                  >
-                    {getLevelIcon(profile?.level)} {profile?.level || 'rookie'}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    background: '#f0f0f0',
-                    height: '10px',
-                    borderRadius: '10px',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${getLevelProgress()}%` }}
-                    transition={{ duration: 1, ease: 'easeOut' }}
-                    style={{
-                      background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
-                      height: '100%'
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    fontSize: '12px',
-                    color: '#999',
-                    marginTop: '5px'
-                  }}
-                >
-                  {profile?.total_xp || 0} / {getNextLevelXP()} XP
-                </div>
-              </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '15px'
-                }}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  style={{
-                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    padding: '20px',
-                    borderRadius: '12px',
-                    textAlign: 'center'
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '32px',
-                      fontWeight: 'bold',
-                      color: '#667eea'
-                    }}
-                  >
-                    {completedCount}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '13px',
-                      color: '#666',
-                      marginTop: '5px'
-                    }}
-                  >
-                    Tasks Done
-                  </div>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  style={{
-                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    padding: '20px',
-                    borderRadius: '12px',
-                    textAlign: 'center'
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '32px',
-                      fontWeight: 'bold',
-                      color: '#764ba2'
-                    }}
-                  >
-                    {profile?.total_xp || 0}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '13px',
-                      color: '#666',
-                      marginTop: '5px'
-                    }}
-                  >
-                    Total XP
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
+          {/* ── ACTIVITY VIEW ── */}
+          {currentView === 'activity' && (
+            <ActivityTracker supabase={supabase} user={user} />
+          )}
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              whileHover={{ y: -4 }}
-              style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                padding: '30px',
-                borderRadius: '16px',
-                color: 'white',
-                boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)',
-                transition: 'all 0.3s'
-              }}
-            >
-              <h3 style={{ marginTop: 0, fontSize: '18px', marginBottom: '15px' }}>
-                🏆 Level Milestones
-              </h3>
-              <div style={{ fontSize: '14px', lineHeight: '2.2', opacity: 0.95 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>🥉</span> Rookie: 0 - 999 XP
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>🥈</span> Prospector: 1,000+ XP
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>🥇</span> Closer: 3,000+ XP
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>💎</span> Elite: 7,000+ XP
-                </div>
-              </div>
-            </motion.div>
-          </div>
+          {/* ── BADGES VIEW ── */}
+          {currentView === 'badges' && (
+            <Badges supabase={supabase} user={user} userTasks={userTasks} profile={profile} />
+          )}
+
+          {/* ── LEADERBOARD VIEW ── */}
+          {currentView === 'leaderboard' && (
+            <Leaderboard supabase={supabase} currentUserId={user.id} />
+          )}
         </div>
-      )}
 
-      {currentView === 'activity' && (
-        <ActivityTracker supabase={supabase} user={user} />
-      )}
-      {currentView === 'badges' && (
-        <Badges
-          supabase={supabase}
-          user={user}
-          userTasks={userTasks}
-          profile={profile}
-        />
-      )}
-      {currentView === 'leaderboard' && (
-        <Leaderboard supabase={supabase} currentUserId={user.id} />
-      )}
+        {/* ── Sidebar (always visible on all views) ── */}
+        <ProgressSidebar />
+      </div>
     </div>
   )
 }
