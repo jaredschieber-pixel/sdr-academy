@@ -164,13 +164,13 @@ function App() {
 
   if (!user) {
     return (
-      <div style={{ display: 'flex', height: '100vh', fontFamily: 'system-ui' }}>
-        <motion.div initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} style={{ flex: 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white', padding: '60px' }}>
+      <div style={{ display: 'flex', height: '100vh', fontFamily: 'system-ui', width: '100%', overflow: 'hidden' }}>
+        <motion.div initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} style={{ flex: 1, minWidth: '0', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white', padding: '40px' }}>
           <motion.h1 animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 3 }} style={{ fontSize: '48px', marginBottom: '20px' }}>🎯 SDR Academy</motion.h1>
           <p style={{ fontSize: '20px', opacity: 0.9, textAlign: 'center', maxWidth: '400px' }}>Level up your sales skills with gamified onboarding</p>
           <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }} style={{ marginTop: '60px', fontSize: '64px', opacity: 0.3 }}>📞 💼 📊</motion.div>
         </motion.div>
-        <motion.div initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f8f9fa', padding: '60px' }}>
+        <motion.div initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} style={{ flex: 1, minWidth: '0', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f8f9fa', padding: '40px' }}>
           <div style={{ width: '100%', maxWidth: '400px' }}>
             <h2 style={{ fontSize: '32px', marginBottom: '10px', color: '#333' }}>{isSignUp ? 'Create Account' : 'Welcome Back'}</h2>
             <p style={{ color: '#666', marginBottom: '40px', fontSize: '16px' }}>{isSignUp ? 'Sign up to start your journey' : 'Sign in to continue your progress'}</p>
@@ -195,7 +195,7 @@ function App() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%)', fontFamily: 'system-ui' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%)', fontFamily: 'system-ui', width: '100%' }}>
       <AnimatePresence>
         {showCelebration && (
           <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'white', padding: '40px 60px', borderRadius: '20px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', zIndex: 1000, textAlign: 'center' }}>
@@ -206,30 +206,30 @@ function App() {
         )}
       </AnimatePresence>
 
-      <div style={{ background: 'white', borderBottom: '2px solid #e9ecef', padding: '20px 60px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <h1 style={{ margin: 0, fontSize: '24px' }}>🎯 SDR Academy</h1>
-          <div style={{ display: 'flex', gap: '30px', marginLeft: '40px' }}>
-            <a onClick={() => setCurrentView('tasks')} style={{ color: currentView === 'tasks' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer' }}>Tasks{currentView === 'tasks' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
-            <a onClick={() => setCurrentView('activity')} style={{ color: currentView === 'activity' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer', transition: 'color 0.2s' }}>Activity{currentView === 'activity' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
-            <a onClick={() => setCurrentView('badges')} style={{ color: currentView === 'badges' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer', transition: 'color 0.2s' }}>Badges{currentView === 'badges' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
-            <a onClick={() => setCurrentView('leaderboard')} style={{ color: currentView === 'leaderboard' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer', transition: 'color 0.2s' }}>Leaderboard{currentView === 'leaderboard' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
+      <div style={{ background: 'white', borderBottom: '2px solid #e9ecef', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 8px rgba(0,0,0,0.05)', minHeight: '60px', flexWrap: 'wrap', gap: '15px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: '1 1 auto', minWidth: '0' }}>
+          <h1 style={{ margin: 0, fontSize: '18px', whiteSpace: 'nowrap' }}>🎯 SDR Academy</h1>
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+            <a onClick={() => setCurrentView('tasks')} style={{ color: currentView === 'tasks' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer', fontSize: '14px', whiteSpace: 'nowrap' }}>Tasks{currentView === 'tasks' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
+            <a onClick={() => setCurrentView('activity')} style={{ color: currentView === 'activity' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer', transition: 'color 0.2s', fontSize: '14px', whiteSpace: 'nowrap' }}>Activity{currentView === 'activity' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
+            <a onClick={() => setCurrentView('badges')} style={{ color: currentView === 'badges' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer', transition: 'color 0.2s', fontSize: '14px', whiteSpace: 'nowrap' }}>Badges{currentView === 'badges' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
+            <a onClick={() => setCurrentView('leaderboard')} style={{ color: currentView === 'leaderboard' ? '#667eea' : '#666', textDecoration: 'none', fontWeight: '500', position: 'relative', cursor: 'pointer', transition: 'color 0.2s', fontSize: '14px', whiteSpace: 'nowrap' }}>Leaderboard{currentView === 'leaderboard' && <div style={{ position: 'absolute', bottom: '-6px', left: 0, right: 0, height: '2px', background: '#667eea' }}></div>}</a>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '14px', color: '#666', fontWeight: '500' }}>{user.email}</div>
-            <div style={{ fontSize: '12px', color: '#999', textTransform: 'capitalize' }}>
+            <div style={{ fontSize: '12px', color: '#666', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>{user.email}</div>
+            <div style={{ fontSize: '11px', color: '#999', textTransform: 'capitalize', whiteSpace: 'nowrap' }}>
               {getLevelIcon(profile?.level)} {profile?.level || 'rookie'} • {profile?.total_xp || 0} XP
             </div>
           </div>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSignOut} style={{ padding: '10px 20px', background: '#f8f9fa', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontWeight: '500' }}>Sign Out</motion.button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSignOut} style={{ padding: '8px 14px', background: '#f8f9fa', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontWeight: '500', fontSize: '13px', whiteSpace: 'nowrap' }}>Sign Out</motion.button>
         </div>
       </div>
 
       {currentView === 'tasks' && (
-        <div style={{ display: 'flex', gap: '40px', padding: '40px 60px', maxWidth: '1600px', margin: '0 auto' }}>
-          <div style={{ flex: 2 }}>
+        <div style={{ display: 'flex', gap: '40px', padding: '40px 30px', maxWidth: '1600px', margin: '0 auto', flexWrap: 'wrap' }}>
+          <div style={{ flex: '2 1 600px', minWidth: 0 }}>
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ marginBottom: '30px' }}>
               <h2 style={{ fontSize: '28px', marginBottom: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Your Tasks</h2>
               <p style={{ color: '#666', fontSize: '16px' }}>Complete tasks to earn XP and level up</p>
@@ -244,14 +244,14 @@ function App() {
                 
                 return (
                   <motion.div key={task.id} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: index * 0.1 }} whileHover={{ y: -4, boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }} style={{ background: 'white', padding: '30px', borderRadius: '16px', border: `2px solid ${isCompleted ? '#52c41a' : needsRevision ? '#fa8c16' : isPending ? '#0066ff' : '#e9ecef'}`, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', opacity: isCompleted ? 0.7 : 1, transition: 'all 0.3s' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '15px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '15px', flexWrap: 'wrap', gap: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1 1 auto' }}>
                         {isCompleted && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ fontSize: '28px' }}>✅</motion.span>}
                         {isPending && <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }} style={{ fontSize: '28px' }}>⏳</motion.span>}
                         {needsRevision && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} style={{ fontSize: '28px' }}>📝</motion.span>}
                         <h3 style={{ margin: 0, fontSize: '20px', color: '#333' }}>{task.title}</h3>
                       </div>
-                      <motion.span whileHover={{ scale: 1.1 }} style={{ background: isCompleted ? '#f6ffed' : isPending ? '#e7f3ff' : needsRevision ? '#fff7e6' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: isCompleted ? '#52c41a' : isPending ? '#0066ff' : needsRevision ? '#fa8c16' : 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: 'bold' }}>
+                      <motion.span whileHover={{ scale: 1.1 }} style={{ background: isCompleted ? '#f6ffed' : isPending ? '#e7f3ff' : needsRevision ? '#fff7e6' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: isCompleted ? '#52c41a' : isPending ? '#0066ff' : needsRevision ? '#fa8c16' : 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
                         {isCompleted ? '✓ ' : '+'}{task.xp_value} XP
                       </motion.span>
                     </div>
@@ -262,7 +262,7 @@ function App() {
                       showSubmit === task.id ? (
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
                           <textarea placeholder="Paste your work here..." value={submission} onChange={(e) => setSubmission(e.target.value)} style={{ width: '100%', minHeight: '120px', padding: '15px', fontSize: '15px', border: '2px solid #ddd', borderRadius: '12px', marginBottom: '15px', fontFamily: 'system-ui', boxSizing: 'border-box', resize: 'vertical', transition: 'border 0.2s' }} onFocus={(e) => e.target.style.borderColor = '#667eea'} onBlur={(e) => e.target.style.borderColor = '#ddd'} />
-                          <div style={{ display: 'flex', gap: '10px' }}>
+                          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleSubmit(task.id)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '12px 24px', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '500', fontSize: '15px' }}>Submit Task</motion.button>
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setShowSubmit(null)} style={{ background: '#f8f9fa', color: '#666', padding: '12px 24px', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer', fontWeight: '500', fontSize: '15px' }}>Cancel</motion.button>
                           </div>
@@ -278,7 +278,7 @@ function App() {
             </div>
           </div>
 
-          <div style={{ flex: 1, minWidth: '300px' }}>
+          <div style={{ flex: '1 1 300px', minWidth: '280px' }}>
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} whileHover={{ y: -4 }} style={{ background: 'white', padding: '30px', borderRadius: '16px', border: '2px solid #e9ecef', marginBottom: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', transition: 'all 0.3s' }}>
               <h3 style={{ marginTop: 0, fontSize: '18px', marginBottom: '20px' }}>Your Progress</h3>
               <div style={{ marginBottom: '25px' }}>
@@ -307,7 +307,7 @@ function App() {
 
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} whileHover={{ y: -4 }} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '30px', borderRadius: '16px', color: 'white', boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)', transition: 'all 0.3s' }}>
               <h3 style={{ marginTop: 0, fontSize: '18px', marginBottom: '15px' }}>🏆 Level Milestones</h3>
-              <div style={{ fontSize: '14px', lineHeight: '2.2', opacity: 0.95 }}>
+              <div style={{ fontSize: '14px', lineHeight: '2.2', opacity: 0.95' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span>🥉</span> Rookie: 0 - 999 XP</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span>🥈</span> Prospector: 1,000+ XP</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span>🥇</span> Closer: 3,000+ XP</div>
