@@ -307,7 +307,7 @@ function App() {
 
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} whileHover={{ y: -4 }} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '30px', borderRadius: '16px', color: 'white', boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)', transition: 'all 0.3s' }}>
               <h3 style={{ marginTop: 0, fontSize: '18px', marginBottom: '15px' }}>🏆 Level Milestones</h3>
-              <div style={{ fontSize: '14px', lineHeight: '2.2', opacity: 0.95' }}>
+              <div style={{ fontSize: '14px', lineHeight: '2.2', opacity: 0.95 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span>🥉</span> Rookie: 0 - 999 XP</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span>🥈</span> Prospector: 1,000+ XP</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span>🥇</span> Closer: 3,000+ XP</div>
